@@ -1,17 +1,23 @@
 import streamlit as st
 import numpy as np
+
+# Pilih salah satu:
+# ========== SOLUSI 2: Jika model disimpan dengan joblib tanpa MultiOutputClassifier ==========
 import joblib
-
-from sklearn.multioutput import MultiOutputClassifier  # ⬅ Tambahkan baris ini
-from sklearn.preprocessing import MinMaxScaler
-
-# Load model dan scaler
 model = joblib.load('model_energy_efficiency.pkl')
+
+# ========== SOLUSI 3: Jika model disimpan dengan cloudpickle karena memakai MultiOutputClassifier ==========
+# import cloudpickle
+# with open("model_energy_efficiency.pkl", "rb") as f:
+#     model = cloudpickle.load(f)
+
+# Load scaler
 scaler = joblib.load('scaler_energy.pkl')
 
-st.title("Prediksi Kebutuhan Energi Bangunan 🏢")
+# Judul Aplikasi
+st.title("🔋 Prediksi Kebutuhan Energi Bangunan")
 
-st.markdown("Masukkan nilai-nilai fitur bangunan di bawah ini:")
+st.markdown("Masukkan nilai-nilai fitur bangunan untuk memprediksi kebutuhan **Heating Load (Y1)** dan **Cooling Load (Y2)**:")
 
 # Input fitur
 X1 = st.slider("Relative Compactness (X1)", 0.5, 1.0, 0.75)
@@ -23,25 +29,25 @@ X6 = st.selectbox("Orientation (X6)", [2, 3, 4, 5])
 X7 = st.selectbox("Glazing Area (X7)", [0.0, 0.1, 0.25, 0.4])
 X8 = st.selectbox("Glazing Area Distribution (X8)", [0, 1, 2, 3, 4, 5])
 
-# Tombol prediksi
-if st.button("Prediksi Kebutuhan Energi"):
-    # Bentuk array input
-    user_input = np.array([[X1, X2, X3, X4, X5, X6, X7, X8]])
+# Tombol Prediksi
+if st.button("🔍 Prediksi Kebutuhan Energi"):
+    # Buat array input
+    input_data = np.array([[X1, X2, X3, X4, X5, X6, X7, X8]])
+    
+    # Normalisasi input
+    input_scaled = scaler.transform(input_data)
 
-    # Normalisasi fitur
-    user_input_scaled = scaler.transform(user_input)
+    # Prediksi model
+    prediction = model.predict(input_scaled)
 
-    # Prediksi menggunakan model
-    prediction = model.predict(user_input_scaled)
-
-    # Jika multi-output
     try:
         heating, cooling = prediction[0]
-        st.success(f"🔸 **Heating Load (Y1):** {heating:.2f}")
-        st.success(f"🔸 **Cooling Load (Y2):** {cooling:.2f}")
-    except:
-        st.warning("Prediksi tidak dalam format multi-output.")
-        st.write("Hasil:", prediction)
+        st.success(f"🌡️ Heating Load (Y1): **{heating:.2f}**")
+        st.success(f"❄️ Cooling Load (Y2): **{cooling:.2f}**")
+    except Exception as e:
+        st.warning("Format output model tidak sesuai ekspektasi.")
+        st.write("Output:", prediction)
+        st.error(str(e))
 
 st.markdown("---")
-st.caption("Dibuat dengan Streamlit | Data: UCI Energy Efficiency Dataset")
+st.caption("Dibuat dengan Streamlit • Dataset: UCI Energy Efficiency")
