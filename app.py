@@ -2,6 +2,11 @@ import streamlit as st
 import numpy as np
 import joblib
 
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.multioutput import MultiOutputClassifier
+from sklearn.preprocessing import MinMaxScaler
+
+
 # Load model dan scaler
 model = joblib.load('model_energy_efficiency.pkl')
 scaler = joblib.load('scaler_energy.pkl')
