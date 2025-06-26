@@ -2,8 +2,7 @@ import streamlit as st
 import numpy as np
 import joblib
 
-from sklearn.multioutput import MultiOutputClassifier  # ← Tambahkan ini!
-from sklearn.tree import DecisionTreeClassifier        # Jika modelnya dari tree
+from sklearn.multioutput import MultiOutputClassifier  # ⬅ Tambahkan baris ini
 from sklearn.preprocessing import MinMaxScaler
 
 # Load model dan scaler
