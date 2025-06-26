@@ -2,6 +2,10 @@ import streamlit as st
 import numpy as np
 import joblib
 
+from sklearn.multioutput import MultiOutputClassifier  # ← Tambahkan ini!
+from sklearn.tree import DecisionTreeClassifier        # Jika modelnya dari tree
+from sklearn.preprocessing import MinMaxScaler
+
 # Load model dan scaler
 model = joblib.load('model_energy_efficiency.pkl')
 scaler = joblib.load('scaler_energy.pkl')
